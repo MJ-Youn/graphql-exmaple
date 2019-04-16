@@ -1,9 +1,9 @@
 package kr.co.ymtech.provider;
 
-import graphql.ExecutionResult;
+import java.util.Map;
 
 public interface CustomProvider {
 
-	ExecutionResult execute(String query);
+	Map<String, Object> execute(String query);
 	
 }

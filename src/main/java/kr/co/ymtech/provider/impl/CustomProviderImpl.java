@@ -1,6 +1,10 @@
 package kr.co.ymtech.provider.impl;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -46,8 +50,30 @@ public class CustomProviderImpl implements CustomProvider {
 	}
 	
 	@Override
-	public ExecutionResult execute(String query) {
-		return graphQL.execute(query);
+	public Map<String, Object> execute(String query) {
+		Map<String, Object> result = new HashMap<>();
+		ExecutionResult executionResult = graphQL.execute(query);
+		
+		result.put("data", executionResult.getData());
+		
+		List<Map<String, Object>> errors = executionResult.getErrors()
+				.stream()
+				.map(error -> {
+					Map<String, Object> extension = error.getExtensions();
+					
+					if (extension == null) {
+						extension = new HashMap<String, Object>();
+						extension.put("errorCode", 11);
+						extension.put("errorMessage", error.getMessage());
+					}
+					
+					return extension;
+				})
+				.collect(Collectors.toList());
+
+		result.put("errors", errors);
+		
+		return result;
 	}
 
 }

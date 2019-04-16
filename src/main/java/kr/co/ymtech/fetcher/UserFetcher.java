@@ -1,6 +1,5 @@
 package kr.co.ymtech.fetcher;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,6 +15,7 @@ import kr.co.ymtech.dto.PhoneDTO;
 import kr.co.ymtech.dto.UserDTO;
 import kr.co.ymtech.entity.Phone;
 import kr.co.ymtech.entity.User;
+import kr.co.ymtech.exception.CustomGraphQLException;
 import kr.co.ymtech.repository.UserRepository;
 import kr.co.ymtech.util.DataUtil;
 
@@ -44,21 +44,24 @@ public class UserFetcher implements GraphQLMutationResolver, GraphQLQueryResolve
 					})
 					.collect(Collectors.toList());
 		} else {
-			Optional<User> userOp = userRepo.findById(id);
-			
-			if (userOp.isPresent()) {
-				User user = userOp.get();
-				UserDTO userDTO = DataUtil.converterDataToData(user, UserDTO.class);
-				
-				List<Phone> phoneList = user.getPhoneList();
-				List<PhoneDTO> phoneDTOList = phoneList.stream()
-						.map(phone -> DataUtil.converterDataToData(phone, PhoneDTO.class))
-						.collect(Collectors.toList());
-				userDTO.setPhoneList(phoneDTOList);
-				
-				userDTOList = new ArrayList<UserDTO>();
-				userDTOList.add(userDTO);
-			}
+			throw new CustomGraphQLException(555, "custom Error");
+//			throw new GraphQLException("hello world");
+//			
+//			Optional<User> userOp = userRepo.findById(id);
+//			
+//			if (userOp.isPresent()) {
+//				User user = userOp.get();
+//				UserDTO userDTO = DataUtil.converterDataToData(user, UserDTO.class);
+//				
+//				List<Phone> phoneList = user.getPhoneList();
+//				List<PhoneDTO> phoneDTOList = phoneList.stream()
+//						.map(phone -> DataUtil.converterDataToData(phone, PhoneDTO.class))
+//						.collect(Collectors.toList());
+//				userDTO.setPhoneList(phoneDTOList);
+//				
+//				userDTOList = new ArrayList<UserDTO>();
+//				userDTOList.add(userDTO);
+//			}
 		}
 		
 		return userDTOList;
